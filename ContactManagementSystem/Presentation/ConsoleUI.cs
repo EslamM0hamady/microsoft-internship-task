@@ -1,8 +1,9 @@
-﻿using ContactManagementSystem.Application.Services;
+using ContactManagementSystem.Application.Services;
 using ContactManagementSystem.Domain.Entities;
 
 namespace ContactManagementSystem.Presentation
 {
+    // Console-based user interface for interacting with contacts.
     public class ConsoleUI
     {
         private readonly ContactService _service;
@@ -12,6 +13,7 @@ namespace ContactManagementSystem.Presentation
             _service = service;
         }
 
+        // Main interaction loop showing the menu and dispatching actions.
         public void Run()
         {
             while (true)
@@ -54,6 +56,7 @@ namespace ContactManagementSystem.Presentation
             }
         }
 
+        // Write the main menu options to the console.
         private void ShowMenu()
         {
             Console.WriteLine("\n===== Contact Management =====");
@@ -69,6 +72,7 @@ namespace ContactManagementSystem.Presentation
             Console.Write("Choose: ");
         }
 
+        // Display a single contact in a readable format.
         private void PrintContact(Contact contact)
         {
             Console.WriteLine("---------------------------");
@@ -79,6 +83,7 @@ namespace ContactManagementSystem.Presentation
             Console.WriteLine($"CreatedAt: {contact.CreatedAt}");
         }
 
+        // Capture details from the user and add a new contact.
         private void AddContact()
         {
             Console.Write("Name: ");
@@ -95,6 +100,7 @@ namespace ContactManagementSystem.Presentation
             Console.WriteLine("Contact added successfully!");
         }
 
+        // Edit an existing contact selected by Id.
         private void EditContact()
         {
             Console.Write("Enter Contact Id: ");
@@ -118,6 +124,7 @@ namespace ContactManagementSystem.Presentation
             Console.WriteLine(success ? "Contact updated successfully." : "Contact not found.");
         }
 
+        // Delete a contact selected by Id.
         private void DeleteContact()
         {
             Console.Write("Enter Contact Id: ");
@@ -132,6 +139,7 @@ namespace ContactManagementSystem.Presentation
             Console.WriteLine(success ? "Contact deleted successfully." : "Contact not found.");
         }
 
+        // Show a single contact selected by Id.
         private void ViewContact()
         {
             Console.Write("Enter Contact Id: ");
@@ -152,6 +160,7 @@ namespace ContactManagementSystem.Presentation
             PrintContact(contact);
         }
 
+        // List all stored contacts.
         public void ListContacts()
         {
             var contacts = _service.ListContacts();
@@ -168,6 +177,7 @@ namespace ContactManagementSystem.Presentation
             }
         }
 
+        // Search contacts by keyword across multiple fields.
         private void SearchContact()
         {
             Console.Write("Enter a keyword to search (Name/Phone/Email): ");
@@ -188,6 +198,7 @@ namespace ContactManagementSystem.Presentation
             }
         }
 
+        // Filter contacts using simple "starts with" criteria.
         private void FilterContacts()
         {
             Console.WriteLine("Filter Options:");
@@ -221,6 +232,7 @@ namespace ContactManagementSystem.Presentation
             }
         }
 
+        // Persist current contacts to disk.
         private void SaveContacts()
         {
             _service.Save();

@@ -1,92 +1,102 @@
-﻿using ContactManagementSystem.Domain.Entities;
+using ContactManagementSystem.Domain.Entities;
 using ContactManagementSystem.Domain.Interfaces;
 using System.Text.Json;
 
 namespace ContactManagementSystem.Infrastructure
 {
-	public class JsonContactRepository : IContactRepository
-	{
-		private Dictionary<Guid, Contact> _contacts = new Dictionary<Guid, Contact>();
-		private readonly string _filePath;
+    // File-based repository that stores contacts as JSON on disk.
+    public class JsonContactRepository : IContactRepository
+    {
+        // In-memory index keyed by contact Id.
+        private Dictionary<Guid, Contact> _contacts = new Dictionary<Guid, Contact>();
+        private readonly string _filePath;
 
-		public JsonContactRepository(string filePath)
-		{
-			_filePath = filePath;
-		}
+        public JsonContactRepository(string filePath)
+        {
+            _filePath = filePath;
+        }
 
-		public void Add(Contact contact)
-		{
-			_contacts.Add(contact.Id, contact);
-		}
+        // Add a new contact to the in-memory index.
+        public void Add(Contact contact)
+        {
+            _contacts.Add(contact.Id, contact);
+        }
 
-		public bool Update(Guid id, string newName, string newPhone, string newEmail)
-		{
-			var contact = GetById(id);
-			if (contact == null)
-			{
-				return false;
-			}
+        // Update contact fields by Id; returns false if the Id does not exist.
+        public bool Update(Guid id, string newName, string newPhone, string newEmail)
+        {
+            var contact = GetById(id);
+            if (contact == null)
+            {
+                return false;
+            }
 
-			contact.Name = newName;
-			contact.Phone = newPhone;
-			contact.Email = newEmail;
+            contact.Name = newName;
+            contact.Phone = newPhone;
+            contact.Email = newEmail;
 
-			return true;
-		}
+            return true;
+        }
 
-		public bool Delete(Guid id)
-		{
-			return _contacts.Remove(id);
-		}
+        // Remove a contact from the index by Id.
+        public bool Delete(Guid id)
+        {
+            return _contacts.Remove(id);
+        }
 
-		public Contact? GetById(Guid id)
-		{
-			if (_contacts.TryGetValue(id, out Contact? contact))
-			{
-				return contact;
-			}
+        // Try to get a contact from the index by Id.
+        public Contact? GetById(Guid id)
+        {
+            if (_contacts.TryGetValue(id, out Contact? contact))
+            {
+                return contact;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		public IEnumerable<Contact> GetAll()
-		{
-			return _contacts.Values;
-		}
+        // Return all contacts currently loaded in memory.
+        public IEnumerable<Contact> GetAll()
+        {
+            return _contacts.Values;
+        }
 
-		public void Save()
-		{
-			var directory = Path.GetDirectoryName(_filePath);
+        // Serialize the in-memory contacts to the JSON file.
+        public void Save()
+        {
+            var directory = Path.GetDirectoryName(_filePath);
 
-			if (!Directory.Exists(directory))
-			{
-				Directory.CreateDirectory(directory);
-			}
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
 
-			var list = _contacts.Values.ToList();
+            var list = _contacts.Values.ToList();
 
-			var json = JsonSerializer.Serialize(list, new JsonSerializerOptions { WriteIndented = true });
+            var json = JsonSerializer.Serialize(list, new JsonSerializerOptions { WriteIndented = true });
 
-			File.WriteAllText(_filePath, json);
-		}
+            File.WriteAllText(_filePath, json);
+        }
 
-		public void Load()
-		{
-			if (!File.Exists(_filePath) || new FileInfo(_filePath).Length == 0)
-			{
-				return;
-			}
+        // Load contacts from the JSON file into the in-memory index.
+        public void Load()
+        {
+            if (!File.Exists(_filePath) || new FileInfo(_filePath).Length == 0)
+            {
+                return;
+            }
 
-			var json = File.ReadAllText(_filePath);
-			var list = JsonSerializer.Deserialize<List<Contact>>(json) ?? new List<Contact>();
+            var json = File.ReadAllText(_filePath);
+            var list = JsonSerializer.Deserialize<List<Contact>>(json) ?? new List<Contact>();
 
-			_contacts = list.ToDictionary(c => c.Id);
-		}
+            _contacts = list.ToDictionary(c => c.Id);
+        }
 
-		public IEnumerable<Contact> Find(Func<Contact, bool> predicate)
-		{
-			return _contacts.Values.Where(predicate);
-		}
-	}
+        // Apply an in-memory predicate over all contacts.
+        public IEnumerable<Contact> Find(Func<Contact, bool> predicate)
+        {
+            return _contacts.Values.Where(predicate);
+        }
+    }
 }
 
