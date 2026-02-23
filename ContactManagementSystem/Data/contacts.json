@@ -1,0 +1,23 @@
+[
+  {
+    "Id": "a7f19467-100e-4fd7-92e8-d8390e75f539",
+    "Name": "Eslam Mohamady",
+    "Phone": "01117549286",
+    "Email": "em@gmail.com",
+    "CreatedAt": "2026-02-22T21:32:10.9446051+02:00"
+  },
+  {
+    "Id": "7aaf8cd8-a746-4db5-8f6e-25f57c312d12",
+    "Name": "Mahmoud Youssef",
+    "Phone": "02133555447",
+    "Email": "my@gmail.com",
+    "CreatedAt": "2026-02-22T21:32:38.3326713+02:00"
+  },
+  {
+    "Id": "d231a10e-e1b9-4cfb-a922-bd91add9bb3e",
+    "Name": "Eyad Nasser",
+    "Phone": "01322445567",
+    "Email": "en@gmail.com",
+    "CreatedAt": "2026-02-23T21:38:02.4052255+02:00"
+  }
+]
