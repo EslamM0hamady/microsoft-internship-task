@@ -4,19 +4,22 @@ using ContactManagementSystem.Presentation;
 
 namespace ContactManagementSystem
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            JsonContactRepository repository = new JsonContactRepository("E:\\C#Applications\\ContactManagementSystem\\ContactManagementSystem\\Data\\contacts.json");
-            repository.Load();
+	public class Program
+	{
+		public static void Main(string[] args)
+		{
+			string filePath = Path.GetFullPath(
+				Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\Data\contacts.json"));
 
-            ContactService service = new ContactService(repository);
+			JsonContactRepository repository = new JsonContactRepository(filePath);
+			repository.Load();
 
-            ConsoleUI console = new ConsoleUI(service);
-            console.ListContacts();
+			ContactService service = new ContactService(repository);
 
-            console.Run();
-        }
-    }
+			ConsoleUI console = new ConsoleUI(service);
+			console.ListContacts();
+
+			console.Run();
+		}
+	}
 }
