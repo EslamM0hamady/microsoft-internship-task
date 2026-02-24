@@ -13,17 +13,28 @@ namespace ContactManagementSystem.Application.Services
             _repository = repository;
         }
 
-        // Create and store a new contact.
-        public void AddContact(string name, string phone, string email)
+        // Create and store a new contact. Returns false when data is invalid.
+        public bool AddContact(string? name, string? phone, string? email)
         {
+            if (!IsValidContactData(name, phone, email))
+            {
+                return false;
+            }
+
             var contact = new Contact(name, phone, email);
             _repository.Add(contact);
+            return true;
         }
 
-        // Update basic fields; returns false if the contact is missing.
-        public bool EditContact(Guid id, string newName, string newPhone, string newEmail)
+        // Update basic fields; returns false if the contact is missing or data is invalid.
+        public bool EditContact(Guid id, string? newName, string? newPhone, string? newEmail)
         {
-            return _repository.Update(id, newName, newPhone, newEmail);
+            if (!IsValidContactData(newName, newPhone, newEmail))
+            {
+                return false;
+            }
+
+            return _repository.Update(id, newName!, newPhone!, newEmail!);
 
         }
 
@@ -46,7 +57,7 @@ namespace ContactManagementSystem.Application.Services
         }
 
         // Case-insensitive search on name, phone and email; empty keyword returns all.
-        public IEnumerable<Contact> Search(string keyword)
+        public IEnumerable<Contact> Search(string? keyword)
         {
             if (string.IsNullOrWhiteSpace(keyword))
                 return _repository.GetAll();
@@ -67,6 +78,14 @@ namespace ContactManagementSystem.Application.Services
         public void Save()
         {
             _repository.Save();
+        }
+
+        // Basic non-null/non-whitespace validation for contact fields.
+        private static bool IsValidContactData(string? name, string? phone, string? email)
+        {
+            return !string.IsNullOrWhiteSpace(name)
+                && !string.IsNullOrWhiteSpace(phone)
+                && !string.IsNullOrWhiteSpace(email);
         }
     }
 }

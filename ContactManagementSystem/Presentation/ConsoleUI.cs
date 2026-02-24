@@ -19,7 +19,7 @@ namespace ContactManagementSystem.Presentation
             while (true)
             {
                 ShowMenu();
-                var choice = Console.ReadLine();
+                var choice = Console.ReadLine()?.Trim();
 
                 switch (choice)
                 {
@@ -87,48 +87,52 @@ namespace ContactManagementSystem.Presentation
         private void AddContact()
         {
             Console.Write("Name: ");
-            var name = Console.ReadLine();
+            var name = Console.ReadLine()?.Trim();
 
             Console.Write("Phone: ");
-            var phone = Console.ReadLine();
+            var phone = Console.ReadLine()?.Trim();
 
             Console.Write("Email: ");
-            var email = Console.ReadLine();
+            var email = Console.ReadLine()?.Trim();
 
-            _service.AddContact(name, phone, email);
+            var success = _service.AddContact(name, phone, email);
 
-            Console.WriteLine("Contact added successfully!");
+            Console.WriteLine(success
+                ? "Contact added successfully!"
+                : "Name, phone, and email are required.");
         }
 
         // Edit an existing contact selected by Id.
         private void EditContact()
         {
             Console.Write("Enter Contact Id: ");
-            if (!Guid.TryParse(Console.ReadLine(), out Guid id))
+            if (!Guid.TryParse(Console.ReadLine()?.Trim(), out Guid id))
             {
                 Console.WriteLine("Invalid Id format.");
                 return;
             }
 
             Console.Write("New Name: ");
-            var name = Console.ReadLine();
+            var name = Console.ReadLine()?.Trim();
 
             Console.Write("New Phone: ");
-            var phone = Console.ReadLine();
+            var phone = Console.ReadLine()?.Trim();
 
             Console.Write("New Email: ");
-            var email = Console.ReadLine();
+            var email = Console.ReadLine()?.Trim();
 
             var success = _service.EditContact(id, name, phone, email);
 
-            Console.WriteLine(success ? "Contact updated successfully." : "Contact not found.");
+            Console.WriteLine(success
+                ? "Contact updated successfully."
+                : "Contact not found or provided data is invalid.");
         }
 
         // Delete a contact selected by Id.
         private void DeleteContact()
         {
             Console.Write("Enter Contact Id: ");
-            if (!Guid.TryParse(Console.ReadLine(), out Guid id))
+            if (!Guid.TryParse(Console.ReadLine()?.Trim(), out Guid id))
             {
                 Console.WriteLine("Invalid Id format.");
                 return;
@@ -143,7 +147,7 @@ namespace ContactManagementSystem.Presentation
         private void ViewContact()
         {
             Console.Write("Enter Contact Id: ");
-            if (!Guid.TryParse(Console.ReadLine(), out Guid id))
+            if (!Guid.TryParse(Console.ReadLine()?.Trim(), out Guid id))
             {
                 Console.WriteLine("Invalid Id format.");
                 return;
@@ -181,7 +185,7 @@ namespace ContactManagementSystem.Presentation
         private void SearchContact()
         {
             Console.Write("Enter a keyword to search (Name/Phone/Email): ");
-            var keyword = Console.ReadLine();
+            var keyword = Console.ReadLine()?.Trim();
 
             var results = _service.Search(keyword);
 
@@ -206,10 +210,16 @@ namespace ContactManagementSystem.Presentation
             Console.WriteLine("2. Phone starts with");
             Console.Write("Choose: ");
 
-            var choice = Console.ReadLine();
+            var choice = Console.ReadLine()?.Trim();
 
             Console.Write("Enter value: ");
-            var value = Console.ReadLine();
+            var value = Console.ReadLine()?.Trim();
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                Console.WriteLine("Filter value cannot be empty.");
+                return;
+            }
 
             var results = choice switch
             {

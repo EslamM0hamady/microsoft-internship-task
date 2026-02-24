@@ -86,10 +86,18 @@ namespace ContactManagementSystem.Infrastructure
                 return;
             }
 
-            var json = File.ReadAllText(_filePath);
-            var list = JsonSerializer.Deserialize<List<Contact>>(json) ?? new List<Contact>();
+            try
+            {
+                var json = File.ReadAllText(_filePath);
+                var list = JsonSerializer.Deserialize<List<Contact>>(json) ?? new List<Contact>();
 
-            _contacts = list.ToDictionary(c => c.Id);
+                _contacts = list.ToDictionary(c => c.Id);
+            }
+            catch (Exception)
+            {
+                // If the file is corrupted or unreadable, fall back to an empty set of contacts.
+                _contacts = new Dictionary<Guid, Contact>();
+            }
         }
 
         // Apply an in-memory predicate over all contacts.
